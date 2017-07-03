@@ -1,0 +1,10 @@
+AU-iinet:202.59.96.140
+US-verisign:64.6.64.6
+US-google:8.8.8.8
+GER-dnswatch:84.200.69.80
+US-comodo:8.26.56.26
+NZ-sitehost:120.138.27.84
+US-norton:199.85.126.10
+EU-safedns:195.46.39.39
+HK-rack:195.46.39.39
+US-altdns:198.101.242.72

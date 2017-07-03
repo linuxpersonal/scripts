@@ -1,0 +1,54 @@
+#!/usr/bin/python
+
+import socket
+import dns.resolver as dns
+import sys
+
+if len(sys.argv) == 2:
+    pass
+else:
+    print('Usage: ' + sys.argv[0] + ' domainname')
+    exit()
+
+# x = sys.argv[1]
+myresolve = dns.Resolver()
+
+
+def main(x):
+    try:
+        IP = myresolve.query(x, "A")
+        NS = myresolve.query(x, "NS")
+        MX = myresolve.query(x, "MX")
+        TXT = myresolve.query(x, "TXT")
+        rdns = socket.gethostbyaddr(x)
+    except:
+        pass
+
+    try:
+        print("\nHostname:         " + str(rdns[0]))
+    except:
+        print('\nNo Hostname found')
+    try:
+        for i in IP:
+            print("IP Address:       " + str(i))
+    except:
+        print('No IP Found')
+    try:
+        for i in NS:
+            print("Nameservers:      " + str(i))
+    except:
+        print('No Nameservers found')
+    try:
+        for i in MX:
+            print("MX records:       " + str(i))
+    except:
+        print('No MX records found')
+    try:
+        for i in TXT:
+            print("TXT Records:      " + str(i) + "\n")
+    except:
+        print('No TXT Records Found\n')
+
+
+if __name__ == '__main__':
+    main(sys.argv[1])

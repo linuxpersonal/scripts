@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ $# != 1 ]; then echo "Usage: $0 domain[enter domain name i.e. google.com]"
+    exit 1
+fi
+
+if [ $1 = "menu" ] 
+then echo "Menu"
+    exit 0
+fi
+
+server=$1
+
+echo -e "\nUsing Google's Resolver to check DNS records for progation check"
+
+echo -e "\nChecking IP Address and name"
+dig @8.8.8.8 $server +short
+dig -x $(dig @8.8.8.8 $server +short) +short
+
+echo -e "\nChecking Name Servers\n"
+dig @8.8.8.8 -t NS $server +short
+
+echo -e "\nChecking Mx records\n"
+dig @8.8.8.8 -t mx $server +short
+
+echo -e "\nChecking TXT/SPF records"
+dig @8.8.8.8 -t TXT $server +short
+echo ""

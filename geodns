@@ -1,0 +1,76 @@
+#!/bin/bash
+
+dns=$1
+num=$(echo $dns | cut -f1 -d.)
+dnsservers=$(cat /scripts/dnsservers.txt)
+choice=$2
+choice2=$3
+
+if [ $num -eq $num ] 2>/dev/null; then
+
+echo ""
+whois $dns | grep -Ei 'netname|descr:|country|address:|organization' | sort -r | uniq
+echo ""
+
+else
+
+if [ "$choice" = "mx" ] || [ "$choice" = "txt" ] || [ "$choice" = "ns" ]; then :
+else
+echo -e "\nUsing Google's Resolver to check DNS records"
+
+echo -e "\nIP Address and Name"
+value=$(dig @8.8.8.8 $dns +short)
+for i in $value; do echo $i; done
+if [ -z "$value" ]; then echo "No A Record IP Address Found"; else
+dig -x $value +short 2>/dev/null; fi
+
+echo -e "\nName Servers"
+dig @8.8.8.8 -t NS $dns +short
+
+echo -e "\nMx records"
+dig @8.8.8.8 -t mx $dns +short
+
+echo -e "\nTXT/SPF records"
+dig @8.8.8.8 -t TXT $dns +short
+
+fi
+
+if [ "$choice" = "-s" ] || [ "$choice" = "--skip" ] || [ "$choice2" = "-s" ] || [ "$choice2" = "--skip" ]; then :
+else
+echo -e "\nChecking Public Nameservers"
+for i in $dnsservers;
+do
+one=$(echo $i | cut -f1 -d:)
+two=$(echo $i | cut -f2 -d:)
+
+if [ "$choice" = "mx" ]; then result=$(dig $dns @$two mx +short); echo $one: ; echo $result; fi
+if [ "$choice" = "txt" ]; then result=$(dig $dns @$two txt +short); echo "$one: $result"; fi
+if [ "$choice" = "ns" ]; then result=$(dig $dns @$two ns +short); echo $one:; for i in $result; do echo $i; done; fi
+if [ "$choice" = "mx" ] || [ "$choice" = "txt" ] || [ "$choice" = "ns" ]; then :
+else
+result=$(dig $dns @$two +short); echo $one:; for i in $result; do echo $i; done; fi
+
+done
+fi
+
+echo ""
+if [ "$choice" = "mx" ]; then mx1=$(dig $dns @8.8.8.8 mx +short | awk 'NR==1'| cut -f2 -d" "); 
+mx2=$(nslookup $mx1 8.8.8.8 | grep Address | grep -v 8.8.8.8 | awk '{print $2}' | awk 'NR==1')
+echo "IP Address:     $mx2"; 
+echo "MX Record :     $mx1";
+whois $mx2 | grep -Ei 'netname|descr:|country|address:|organization' | sort -r | uniq; fi
+if [ "$choice" = "ns" ]; then ns1=$(dig $dns @8.8.8.8 ns +short | awk 'NR==1'); 
+ns2=$(dig $ns1 @8.8.8.8 +short | awk 'NR==1')
+echo "IP Address:     $ns2"; 
+echo "Nameserver:     $ns1";
+whois $ns2 | grep -Ei 'netname|descr:|country|address:|organization' | sort -r | uniq; 
+printf "\nRegitrar Nameservers\n"; whois $dns | grep 'Name Server' | head -n2; fi
+if [ "$choice" = "mx" ] || [ "$choice" = "txt" ] || [ "$choice" = "ns" ]; then :
+else
+three=$(dig $dns @8.8.8.8 +short | grep -v CNAME | awk 'NR==1');
+whois $three 2>/dev/null | grep -Ei 'netname|descr:|country|address:|organization' | sort -r | uniq; fi
+echo -e "\nRegistrar Owner"
+whois $dns | grep -E "Registrar:|Registrar Name:" | sort -r | uniq | head -n1
+echo ""
+
+fi
