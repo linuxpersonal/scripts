@@ -1,7 +1,5 @@
 #!/bin/bash
-
 exit 0
-
 trap 'echo -e "\nYou are not allowed please do not escape"' SIGINT
 trap 'echo -e "\nYou are not allowed please do not escape"'  SIGQUIT
 trap 'echo -e "\nYou are not allowed please do not escape"' SIGTSTP
@@ -22,7 +20,7 @@ echo -e "${BROWN}===============================================================
 echo -e "${BROWN}    ANYONE WITH UNAUTHORISED ENTRY TO THIS SERVER WILL BE PROSECUTED    ${NC}"
 echo -e "${BROWN}========================================================================${NC}"
 echo -e "${BROWN}========================================================================${NC}"
-echo -e "${BROWN}                       LINUXPERSONAL LOGIN PAGE                         ${NC}"
+echo -e "${BROWN}                         DOCSKULL LOGIN PAGE                            ${NC}"
 echo -e "${BROWN}========================================================================${NC}"
 echo ""
 #EOF

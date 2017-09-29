@@ -12,12 +12,15 @@ fi
 
 if [ ! -z $xmlvalue ]; then
     if [ $xmlvalue -gt 500 ]; then
-        csf -g $IP | grep "csf.deny: $IP # Manually denied" &>/dev/null
+        /usr/sbin/csf -g $IP | grep "csf.deny: $IP # Manually denied" &>/dev/null
         if [ $? != 0 ]; then
-            csf -d $IP
-            echo "$d $IP for xml has been added to csf.deny" >> /root/wpdeny.log
+            /usr/sbin/csf -d $IP
+            grep "$d $IP for xml has been added to csf.deny" >> /dev/null
+	    if [ $? != 0 ]; then
+	    echo "$d $IP for xml has been added to csf.deny" >> /root/wpdeny.log
+	    fi	
         else
-            echo "$d $IP for xml already added to csf.deny" >> /root/wpdeny.log
+	:
         fi
     fi
 else
@@ -26,12 +29,15 @@ fi
 
 if [ ! -z $postvalue ]; then
     if [ $postvalue -gt 500 ]; then
-        csf -g $IP2 | grep "csf.deny: $IP2 # Manually denied" &>/dev/null
+        /usr/sbin/csf -g $IP2 | grep "csf.deny: $IP2 # Manually denied" &>/dev/null
         if [ $? != 0 ]; then
-            csf -d $IP2
+            /usr/sbin/csf -d $IP2
+            grep "$d $IP2 for POST has been added to csf.deny" >> /dev/null
+	    if [ $? !=0 ]; then
             echo "$d $IP2 for POST has been added to csf.deny" >> /root/wpdeny.log
-        else
-            echo "$d $IP2 for POST already added to csf.deny" >> /root/wpdeny.log
+            fi
+	else
+	:
         fi
     fi
 else 

@@ -1,46 +1,84 @@
-#!/bin/bash
+#!/usr/bin/python3
+import timeout_decorator
+import subprocess as s
+import socket
+import dns.resolver as dns
+import sys
+import logging
 
-source /scripts/color
+logging.basicConfig(filename='web.log', level=logging.DEBUG)
 
-if [ $# != 1 ]; then
-    echo "Usage: $0 domain-name[insert name of website without http:// e.g. 'google.com']"
-    exit 1;fi
+if len(sys.argv) != 2:
+    exit('Usage: ' + sys.argv[0] + ' domainname')
 
-server=$1
-cpanelip=$(host cpanel.$server | awk '{print $4}' | awk 'NR==1')
-name=$(host $cpanelip | awk '{print $5}')
+myresolve = dns.Resolver()
 
-if [ $name = "3(NXDOMAIN)" ]; then
-    echo -e "\n${BROWN}WHM/CPanel for this domain not found${NC}\n"
-else
-    echo -e "\n${BROWN}Checking location of WHM/cPanel: ${NC}"
-    echo -e "$name\n";fi
 
-echo -e "${BROWN}Checking IP Location of Domain and MX Records${NC}\n"
-host $server
-value=$(host $server|wc -l)
+@timeout_decorator.timeout(5)
+def main(x):
 
-if [ $value = 1 ]; then
-    echo -e "${BROWN}No MX records were found for this domain${NC}";fi
-echo ""
+    print('\nChecking DNS records for %s' % x)
 
-echo -e "${BROWN}Checking Name Servers${NC}\n"
-host -t NS $server
+    try:
+        NS = myresolve.query(x, "NS")
+        IP = myresolve.query(x, "A")
+        MX = myresolve.query(x, "MX")
+        TXT = myresolve.query(x, "TXT")
+        rdns = socket.gethostbyaddr(x)
+        CP = socket.gethostbyaddr('cpanel.' + str(x))[0]
+    except:
+        pass
 
-echo -e "\n${BROWN}Checking TXT record for SPF and DKIM(default selector) records${NC}\n"
-host -t txt $server
-dkim=$(host -t txt default._domainkey.$server | wc -w)
+    try:
+        print("\nCPanel Host:   " + str(CP))
+    except:
+        print("\nCPanel Host:   DNS not found")
+    try:
+        print("Website Host:  " + str(rdns[0]))
+    except:
+        print('Website Host:  No Hostname found')
+    try:
+        for i in IP:
+            print("IP Address:    " + str(i) )
+    except:
+        print('No IP Found')
+    print("")
+    try:
+        for i in NS:
+            print("Nameservers:   " + str(i))
+    except:
+        print('No Nameservers found')
+    print("")
+    try:
+        for i in MX:
+            print("MX records:    " + str(i))
+    except:
+        print('No MX records found')
+    try:
+        for i in TXT:
+            print("TXT Records:   " + str(i))
+    except:
+        print('No TXT Records Found\n')
 
-if [ $dkim -gt 5 ]; then
-    echo -e "DKIM TXT Records for this domain's default selector were found\nEnter command 'host -t txt default._domainkey.$server' to view TXT record"
-else
-    echo "No Default DKIM Records Found";fi
+    print("\nSSL Information for %s\n" % x)
 
-echo -e "\n${BROWN}Checking SSL Details${NC}\n"
-curl --insecure -v https://$server 2>&1 | awk 'BEGIN { cert=0 } /^\* Server certificate:/ { cert=1 } /^\*/ { if (cert) print }'
-ssl=$(curl --insecure -v https://$server 2>&1 | awk 'BEGIN { cert=0 } /^\* Server certificate:/ { cert=1 } /^\*/ { if (cert) print }'|wc -l)
+    try:
+        ssl = s.Popen(
+                    "curl --insecure -v  https://%s 2>&1 | head -n38 |"
+                    "grep -E 'subject|start|expire date|common|issuer'" %
+                    x, shell=True, stdout=s.PIPE).communicate()[0]
+        print(ssl.decode("ascii"))
 
-if [ $ssl = 0 ];
-    then echo "${BROWN}Valid SSL Certificate not found on this domain${NC}";
-else echo | openssl s_client -servername $server -connect $server:443 2>/dev/null | openssl x509 -text 2>/dev/null | grep DNS ;fi
-echo ""
+        sslnames = s.Popen("echo | openssl s_client -servername "
+                           "%s -connect %s:443 2>/dev/null"
+                           "| openssl x509 -text 2>/dev/null | grep DNS"
+                           % (x, x), shell=True,
+                           stdout=s.PIPE).communicate()[0].strip()
+        print(sslnames.decode("ascii"))
+    except Exception as e:
+        print("Unable to locate SSL Details\n")
+        logging.error('Unable to locate SSL details: %s' % str(e))
+
+
+if __name__ == '__main__':
+    main(sys.argv[1])

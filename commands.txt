@@ -1,15 +1,14 @@
 #!/bin/bash
 
 echo -e "\nChecking VPS/dedicated server state"
-memory1=$(grep OOM /var/log/messages)
-#memory2=$(grep memory /var/log/messages)
+memory=$(grep -i OOM /var/log/messages)
 
-if [ ! -z $memory1 ]; then
-        echo ""; echo $memory1; else
+if [ ! -z $memory ]; then
+        echo ""; echo $memory; else
         echo "No signs of OOM in /var/log/messages"; fi
 
 echo -e "\nChecking Easy Apache version"
-rpm -qa | grep ea-php | tail -n1 &>/dev/null
+rpm -qa | grep ea-php &>/dev/null 
 if [ $? = 0 ]; then
         echo "Easy Apache 4 is installed"; else
         echo "Easy Apache 4 is not installed"; fi
@@ -23,13 +22,10 @@ exim -bpc 2>/dev/null
 echo -e "\nChecking memory usage"
 free -mh | sed -ne '1,2p'
 
-if [ -e /usr/local/apache/access_log ]; then
-        echo -e "\nChecking access logs for excess GET requests\n"
-        for i in `find /home -name access-logs`; do echo $i |cut -d/ -f 3; cat $i/* | grep GET | sort | awk '{print $1}' | uniq -c | sort -n | tail -n5; done 2>/dev/null
-        echo -e "\nChecking access logs for excess POST requests\n"
-        for i in `find /home -name access-logs`; do echo $i |cut -d/ -f 3; cat $i/* | grep POST | sort | awk '{print $1}' | uniq -c | sort -n | tail -n5; done 2>/dev/null
-else
-        echo -e "\n/usr/local/apache/access_log not found"; fi
+echo -e "\nChecking access logs for excess GET requests\n"
+grep GET /usr/local/apache/domlogs/* 2>/dev/null | sort | awk '{print $1}' | uniq -c | sort -n | tail -n8
+echo -e "\nChecking access logs for excess POST requests\n"
+grep POST /usr/local/apache/domlogs/* 2>/dev/null | sort | awk '{print $1}' | uniq -c | sort -n | tail -n8
 
 echo -e "\nChecking status of mysql"
 service mysql status | head -n5

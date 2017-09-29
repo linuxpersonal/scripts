@@ -1,16 +1,15 @@
 #!/bin/bash
 
 if [ $# -ne 1 ] && [ $# -ne 2 ] ;then
-echo -e "\nInvalid number of arguments"
-echo -e "Usage: $0 remoteip/hostname portnumber(if left blank default port is 22)\n"
-exit 0
+    echo -e "\nInvalid number of arguments"
+    echo -e "Usage: $0 remoteip/hostname portnumber(if left blank default port is 22)\n"
+    exit 0
 fi
 
-if [ ! -z $2 ];
-then
-port=$2
+if [ ! -z $2 ]; then
+    port=$2
 else
-port=22
+    port=22
 fi
 
 hostip=$1
