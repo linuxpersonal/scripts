@@ -25,7 +25,7 @@ def main(x):
         MX = myresolve.query(x, "MX")
         TXT = myresolve.query(x, "TXT")
         rdns = socket.gethostbyaddr(x)
-        CP = socket.gethostbyaddr('cpanel.' + str(x))[0]
+        CP = socket.gethostbyaddr('cpanel.%s' % x)[0]
     except:
         pass
 
