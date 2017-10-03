@@ -1,5 +1,4 @@
 #!/bin/bash
-exit 0
 trap 'echo -e "\nYou are not allowed please do not escape"' SIGINT
 trap 'echo -e "\nYou are not allowed please do not escape"'  SIGQUIT
 trap 'echo -e "\nYou are not allowed please do not escape"' SIGTSTP
