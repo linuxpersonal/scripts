@@ -34,7 +34,7 @@ class wpremove():
     def removal(self):
 
         website_path = '/var/www/html/' + self.website
-        db = sql.connect('localhost', 'root', 'asdasd_324', 'mysql')
+        db = sql.connect('localhost', 'root', 'password123', 'mysql')
         cursor = db.cursor()
         dbname = self.website.split('.')[0][0:6] + '_wp'
 

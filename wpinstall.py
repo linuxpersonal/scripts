@@ -54,7 +54,7 @@ class wp():
 
         website_path = '/var/www/html/'
         website_full = website_path + self.website
-        db = sql.connect("localhost", "root", "asdasd_324")
+        db = sql.connect("localhost", "root", "password123")
         cursor = db.cursor()
         dbname = self.website.split('.')[0][0:6] + '_wp'
         wp_dl = 'https://wordpress.org/latest.tar.gz'
@@ -72,7 +72,7 @@ class wp():
         cursor.execute('create database if not exists %s' % dbname)
         cursor.execute(
             "grant all privileges on %s.* to %s@localhost identified by\
-            'asdasd_324'" % (dbname, dbname))
+            'password123'" % (dbname, dbname))
         cursor.execute('flush privileges')
 
         print('\nInserting settings into wp-config')
@@ -85,7 +85,7 @@ class wp():
         with open(website_full + '/wp-config.php', 'w') as f:
             r = r.replace('database_name_here', dbname)
             r = r.replace('username_here', dbname)
-            r = r.replace('password_here', 'asdasd_324')
+            r = r.replace('password_here', 'password123')
             f.write(r)
         s.call('chown -R apache:apache %s' % website_full, shell=True)
         db.close()
