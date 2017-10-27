@@ -1,0 +1,51 @@
+#!/bin/bash
+
+source /custom/color 2>/dev/null || source /scripts/color
+
+if [ $# != 1 ]; then
+    echo "Usage: $0 domain-name[insert name of website without http:// e.g. 'google.com']"
+    exit 1;fi
+
+server=$1
+cpanelip=$(host cpanel.$server | awk '{print $4}' | awk 'NR==1')
+name=$(host $cpanelip | awk '{print $5}')
+
+if [ $name = "3(NXDOMAIN)" ]; then
+    echo -e "\n${BROWN}WHM/CPanel for this domain not found${NC}\n"
+else
+    echo -e "\n${BROWN}Checking location of WHM/cPanel: ${NC}\n"
+    echo -e "$name\n";fi
+
+echo -e "${BROWN}Checking IP Location of Domain and MX Records${NC}\n"
+host $server
+value=$(host $server|wc -l)
+
+if [ $value = 1 ]; then
+    echo -e "${BROWN}No MX records were found for this domain${NC}";fi
+echo ""
+
+echo -e "${BROWN}Checking Name Servers${NC}\n"
+host -t NS $server
+
+echo -e "\n${BROWN}Checking TXT record for SPF and DKIM(default selector) records${NC}\n"
+host -t txt $server
+dkim=$(host -t txt default._domainkey.$server | wc -w)
+
+if [ $dkim -gt 5 ]; then
+    echo -e "DKIM TXT Records for this domain's default selector were found\n"
+    echo -e "Enter command 'host -t txt default._domainkey.$server' to view TXT record"
+else
+    echo "No Default DKIM Records Found";fi
+
+echo -e "\n${BROWN}Checking SSL Details${NC}\n"
+curl --insecure -v https://$server 2>&1\
+| awk 'BEGIN { cert=0 } /^\* Server certificate:/ { cert=1 } /^\*/ { if (cert) print }'
+ssl=$(curl --insecure -v https://$server 2>&1\
+| awk 'BEGIN { cert=0 } /^\* Server certificate:/ { cert=1 } /^\*/ { if (cert) print }'|wc -l)
+
+if [ $ssl = 0 ]; then 
+    echo "${BROWN}Valid SSL Certificate not found on this domain${NC}";
+else 
+    echo | openssl s_client -servername $server -connect $server:443 2>/dev/null\
+    | openssl x509 -text 2>/dev/null | grep DNS ;fi
+echo ""
