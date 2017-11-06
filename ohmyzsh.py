@@ -13,6 +13,8 @@ def main():
     cmd3 = 'git clone https://github.com/zsh-users/'\
             'zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions'
 
+    ## Installing packages required for oh-my-zsh
+
     try:
         packages = s.Popen(cmd1, stdout=s.PIPE).communicate()[0]
     except Exception as e:
@@ -26,7 +28,9 @@ def main():
             print(e)
     else:
         print("Skipping oh-my-zsh install: .oh-my-zsh directory exists")
-    
+
+    ## Installing oh-my-zsh
+
     if not os.path.exists('/root/.oh-my-zsh/custom/plugins/'\
             'zsh-autosuggestions'):
         try:
@@ -37,8 +41,7 @@ def main():
     else:
         print("Skipping plugin install: autosuggestion dir already exists")
 
-    # check = s.call(['grep', 'zsh-autosuggestions', '/root/.zshrc', 
-    #                 '&>', '/dev/null'])
+    ## Adding plugin to .zshrc conf file
 
     if os.path.exists('/root/.zshrc'):
         with open('/root/.zshrc', 'r') as f:                                                                                                                                                                                                                                                            
