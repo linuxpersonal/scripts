@@ -50,6 +50,8 @@ def main():
                 with open('/root/.zshrc', 'w') as f:                                                                                                                                                                                                                                                            
                     r = r.replace('plugins=(git)', 
                                   'plugins=(git zsh-autosuggestions)')                                                                                                                                                                                                                                                                  
+                    r = r.replace('ZSH_THEME="robbyrussell"',
+                                  'ZSH_THEME="agnoster"')
                     f.write(r)
                 print("Writing to file successfull")
             else:
