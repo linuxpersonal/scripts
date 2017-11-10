@@ -1,13 +1,22 @@
 #!/usr/bin/python
 
+import platform
 import subprocess as s
 import os
+
 def main():
 
     print("Installing zsh and oh-my-zsh")
     print("Steps: 1-Install packages, 2-Install oh-my-zshm, 3-Install plugin")
+    
+    osver = platform.linux_distribution()[0]
 
-    cmd1 = ['yum', 'install', '-y', 'zsh', 'wget', 'git']
+    if osver == 'CentOS Linux':
+        package = 'yum'
+    elif osver == 'Ubuntu':
+        package = 'apt'
+
+    cmd1 = [package, 'install', '-y', 'zsh', 'wget', 'git']
     cmd2 = 'sh -c "$(wget https://raw.github.com/robbyrussell/'\
            'oh-my-zsh/master/tools/install.sh -O -)"'
     cmd3 = 'git clone https://github.com/zsh-users/'\
