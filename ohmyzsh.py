@@ -11,8 +11,8 @@ def main():
     cmd2 = 'sh -c "$(wget https://raw.github.com/robbyrussell/'\
            'oh-my-zsh/master/tools/install.sh -O -)"'
     cmd3 = 'git clone https://github.com/zsh-users/'\
-            'zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions'
-
+            'zsh-autosuggestions'\
+            '/root/.oh-my-zsh/custom/plugins/zsh-autosuggestions'
     ## Installing packages required for oh-my-zsh
 
     try:
@@ -50,8 +50,9 @@ def main():
                 with open('/root/.zshrc', 'w') as f:                                                                                                                                                                                                                                                            
                     r = r.replace('plugins=(git)', 
                                   'plugins=(git zsh-autosuggestions)')                                                                                                                                                                                                                                                                  
-                    r = r.replace('ZSH_THEME="robbyrussell"',
-                                  'ZSH_THEME="agnoster"')
+                    if 'robbyrussel' in r:
+                        r = r.replace('ZSH_THEME="robbyrussell"',
+                                      'ZSH_THEME="agnoster"')
                     f.write(r)
                 print("Writing to file successfull")
             else:
