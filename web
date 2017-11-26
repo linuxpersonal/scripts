@@ -14,12 +14,12 @@ if len(sys.argv) != 2:
 myresolve = dns.Resolver()
 
 
-@timeout_decorator.timeout(5)
+@timeout_decorator.timeout(8)
 def main(x):
 
     print('\nChecking DNS records for %s' % x)
 
-    try:
+    try: 
         NS = myresolve.query(x, "NS")
         IP = myresolve.query(x, "A")
         MX = myresolve.query(x, "MX")
@@ -29,52 +29,50 @@ def main(x):
     except:
         pass
 
-    try:
-        print("\nCPanel Host:   " + str(CP))
-    except:
-        print("\nCPanel Host:   DNS not found")
-    try:
-        print("Website Host:  " + str(rdns[0]))
-    except:
-        print('Website Host:  No Hostname found')
-    try:
+    try: print("\nCPanel Host:   " + str(CP))
+    except: print("\nCPanel Host:   DNS not found")
+   
+    try: print("Website Host:  " + str(rdns[0]))
+    except: print('Website Host:  No Hostname found')
+    
+    try: 
         for i in IP:
             print("IP Address:    " + str(i) )
-    except:
-        print('No IP Found')
+    except: print('No IP Found')
     print("")
-    try:
+    
+    try: 
         for i in NS:
             print("Nameservers:   " + str(i))
-    except:
-        print('No Nameservers found')
+    except: print('No Nameservers found')
     print("")
-    try:
+    
+    try: 
         for i in MX:
             print("MX records:    " + str(i))
-    except:
-        print('No MX records found')
-    try:
+    except: print('No MX records found')
+    
+    try: 
         for i in TXT:
             print("TXT Records:   " + str(i))
-    except:
-        print('No TXT Records Found\n')
+    except: print('No TXT Records Found\n')
 
     print("\nSSL Information for %s\n" % x)
 
+    commandone = ("curl --insecure -v  https://%s 2>&1 | head -n38 | "\
+                  "grep -E 'subject|start|expire date|common|issuer'" % x)
+    commandtwo = ("echo | openssl s_client -servername "\
+                  "%s -connect %s:443 2>/dev/null "\
+                  "| openssl x509 -text 2>/dev/null | grep DNS" % (x, x))
+
     try:
-        ssl = s.Popen(
-                    "curl --insecure -v  https://%s 2>&1 | head -n38 |"
-                    "grep -E 'subject|start|expire date|common|issuer'" %
-                    x, shell=True, stdout=s.PIPE).communicate()[0]
+        ssl = s.Popen(commandone, shell=True, stdout=s.PIPE).communicate()[0]
         print(ssl.decode("ascii"))
 
-        sslnames = s.Popen("echo | openssl s_client -servername "
-                           "%s -connect %s:443 2>/dev/null"
-                           "| openssl x509 -text 2>/dev/null | grep DNS"
-                           % (x, x), shell=True,
+        sslnames = s.Popen(commandtwo, shell=True,
                            stdout=s.PIPE).communicate()[0].strip()
         print(sslnames.decode("ascii"))
+   
     except Exception as e:
         print("Unable to locate SSL Details\n")
         logging.error('Unable to locate SSL details: %s' % str(e))
