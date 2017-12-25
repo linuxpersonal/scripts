@@ -35,6 +35,9 @@ if [ $? = 1 ]; then
     exit 1
 fi
 
+yum install \
+    yum-utils \
+    epel-release -y
 yum upgrade rpm -y
 
 rpm -qa | grep remi-release 
