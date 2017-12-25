@@ -55,16 +55,28 @@ function php_install () {
 
 printf "\nInstaiing PHP $1\n"
 
+yum-config-manager --disable $repo 1>/dev/null
+
 remi_repo
 yum remove php-* -y
 
 if [ $1 = "5.3" ]; then
     yum install $2 -y
 else
-    yum --enablerepo remi-$2 install $3 -y
+    yum-config-manager --enable remi-$2
+    yum install $3 -y
 fi
 
 }
+
+repo="\
+remi-php54
+remi-php55
+remi-php56
+remi-php70
+remi-php71
+remi-php72
+"
 
 clear
 
