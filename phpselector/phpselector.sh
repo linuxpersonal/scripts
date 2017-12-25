@@ -57,7 +57,12 @@ printf "\nInstaiing PHP $1\n"
 
 remi_repo
 yum remove php-* -y
-yum install $2 -y
+
+if [ $1 = "5.3" ]; then
+    yum install $2 -y
+else
+    yum --enablerepo remi-$2 install $3 -y
+fi
 
 }
 
@@ -75,17 +80,17 @@ case "$userinput" in
 
 1) php_install "5.3" "$php53"
    ;;
-2) php_install "5.4" "$php54"
+2) php_install "5.4" "php54" "$php54"
    ;;
-3) php_install "5.5" "$php55"
+3) php_install "5.5" "php55" "$php55"
    ;;
-4) php_install "5.6" "$php56"
+4) php_install "5.6" "php56" "$php56"
    ;;
-5) php_install "7.0" "$php70"
+5) php_install "7.0" "php70" "$php70"
    ;;
-6) php_install "7.1" "$php71"
+6) php_install "7.1" "php71" "$php71"
    ;;
-7) php_install "7.2" "$php72"
+7) php_install "7.2" "php72" "$php72"
    ;;
 *) printf "\nTerminating Script\n"
    exit 0
