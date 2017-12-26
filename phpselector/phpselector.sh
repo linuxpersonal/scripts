@@ -1,7 +1,7 @@
 #!/bin/bash
 ## Maintainer chris.d@linuxpersonal.com
 
-source /opt/phpselector/phpextensions
+source <(curl -s https://raw.githubusercontent.com/linuxpersonal/scripts/master/phpselector/phpextensions)
 
 function table () {
 
