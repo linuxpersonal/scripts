@@ -1,7 +1,7 @@
 #!/bin/bash
 ## Maintainer chris.d@linuxpersonal.com
 
-source <(curl -s https://raw.githubusercontent.com/linuxpersonal/scripts/master/phpselector/phpextensions)
+source /opt/phpselector/phpextensions
 
 function table () {
 
@@ -58,10 +58,10 @@ function php_install () {
 
 printf "\nInstaiing PHP $1\n"
 
-yum-config-manager --disable $repo 1>/dev/null
+yum-config-manager --disable remi-php* 1>/dev/null
 
 remi_repo
-yum remove php-common -y
+yum remove php-* -y
 
 if [ $1 = "5.3" ]; then
     yum install $2 -y
@@ -71,15 +71,6 @@ else
 fi
 
 }
-
-repo="\
-remi-php54
-remi-php55
-remi-php56
-remi-php70
-remi-php71
-remi-php72
-"
 
 clear
 
