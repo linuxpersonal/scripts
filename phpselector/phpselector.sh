@@ -61,7 +61,7 @@ printf "\nInstaiing PHP $1\n"
 yum-config-manager --disable remi-php* 1>/dev/null
 
 remi_repo
-yum remove php-* -y
+yum remove php-common -y
 
 if [ $1 = "5.3" ]; then
     yum install $2 -y
