@@ -13,7 +13,7 @@ function install_checks () {
   
   for i in "unzip" "lynx" "curl"; do
   
-    rpm-qa | grep $i
+    rpm -qa | grep $i
     if [ $? = 1 ]; then
       yum install $i -y
     fi
