@@ -10,10 +10,15 @@ echo -e \
 }
 
 function install_checks () {
-  yum install \
-  unzip \
-  lynx \
-  curl -y
+  
+  for i in "unzip" "lynx" "curl"; do
+  
+    rpm-qa | grep $i
+    if [ $? = 1 ]; then
+      yum install $i
+    fi
+ 
+  done
 }
 
 function plugin_url () {
@@ -74,6 +79,7 @@ temp_dir=$(mktemp -d)
 
 printf "Running Server Checks\n"
 install_checks &>/dev/null
+echo ""
 create_backup $plugin_root
 
 printf "Updating plugins now, this may take some time\n"
