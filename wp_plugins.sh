@@ -117,7 +117,8 @@ for i in $(ls $temp_dir); do
   
     unzipped=$(echo $i | cut -f1 -d.)
     unzip -d $temp_dir $temp_dir/$i &>/dev/null
-
+    
+    rm -rf $plugin_root/$unzipped
     cp -rf $temp_dir/$unzipped $plugin_root
     printf "Update of plugin $unzipped completed\n"
   
@@ -128,7 +129,7 @@ done
 if [ -f "$temp_dir/error.txt" ]; then
   printf "\nPlugins below were not updated/unsuccessful:\n\n"
   cat "$temp_dir/error.txt"
-  echo ""
 fi
 
+echo ""
 rm -rf $temp_dir
