@@ -15,7 +15,7 @@ function install_checks () {
   
     rpm-qa | grep $i
     if [ $? = 1 ]; then
-      yum install $i
+      yum install $i -y
     fi
  
   done
