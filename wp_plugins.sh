@@ -13,7 +13,8 @@ function install_checks () {
   
   for i in "unzip" "lynx" "curl"; do
   
-    rpm -qa | grep $i
+    rpm -qa | grep "^$i"
+    
     if [ $? = 1 ]; then
       yum install $i -y
     fi
@@ -79,7 +80,6 @@ temp_dir=$(mktemp -d)
 
 printf "Running Server Checks\n"
 install_checks &>/dev/null
-echo ""
 create_backup $plugin_root
 
 printf "Updating plugins now, this may take some time\n"
