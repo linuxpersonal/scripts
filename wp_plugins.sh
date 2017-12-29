@@ -77,7 +77,7 @@ printf "\nWelcome to the Wordpress Plugins Update Script\n"
 line
 
 plugin_root="$1/wp-content/plugins"
-plugin_list=$(ls $plugin_root | grep -v ".php")
+plugin_list=$(ls $plugin_root | grep -v "\.php\b")
 temp_dir=$(mktemp -d)
 
 printf "Running Server Checks\n"
