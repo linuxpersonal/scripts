@@ -20,6 +20,7 @@ function install_checks () {
     fi
  
   done
+
 }
 
 function plugin_url () {
@@ -27,6 +28,7 @@ function plugin_url () {
   temp_dir=$(mktemp -d) 
 
   curl $1 -o $temp_dir/url.html
+
   dl_link=$(lynx --listonly -dump $temp_dir/url.html \
   | grep downloads.wordpress | awk '{print $2}')
 
@@ -66,7 +68,7 @@ function create_backup () {
 
 }
 
-if [ ! -d $1 ]; then
+if [ $# != 1 ] || [ ! -d "$1" ]; then
   printf "\nUsage: $0 [Location of wordpress install e.g. /var/www/html/public_html]"
   exit 1
 fi
@@ -79,11 +81,13 @@ plugin_list=$(ls $plugin_root | grep -v ".php")
 temp_dir=$(mktemp -d)
 
 printf "Running Server Checks\n"
+
 install_checks &>/dev/null
 create_backup $plugin_root
 
 printf "Updating plugins now, this may take some time\n"
 line
+
 printf "List of Plugins to be updated:\n\n"
 for i in $plugin_list; do echo $i; done
 
