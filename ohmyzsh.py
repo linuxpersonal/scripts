@@ -21,7 +21,7 @@ def main():
            'oh-my-zsh/master/tools/install.sh -O -)"'
     cmd3 = 'git clone https://github.com/zsh-users/'\
             'zsh-autosuggestions '\
-            '/root/.oh-my-zsh/custom/plugins/zsh-autosuggestions'
+            '$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions'
     ## Installing packages required for oh-my-zsh
 
     try:
@@ -29,7 +29,7 @@ def main():
     except Exception as e:
         print(e)
 
-    if not os.path.exists('/root/.oh-my-zsh'):
+    if not os.path.exists('$HOME/.oh-my-zsh'):
         try:
             zsh_install = s.Popen(
                     cmd2, stdout=s.PIPE, shell=True).communicate()[0]
@@ -40,7 +40,7 @@ def main():
 
     ## Installing oh-my-zsh
 
-    if not os.path.exists('/root/.oh-my-zsh/custom/plugins/'\
+    if not os.path.exists('$HOME/.oh-my-zsh/custom/plugins/'\
             'zsh-autosuggestions'):
         try:
             zsh_plugin = s.Popen(
@@ -52,11 +52,11 @@ def main():
 
     ## Adding plugin to .zshrc conf file
 
-    if os.path.exists('/root/.zshrc'):
-        with open('/root/.zshrc', 'r') as f:                                                                                                                                                                                                                                                            
+    if os.path.exists('$HOME/.zshrc'):
+        with open('$HOME/.zshrc', 'r') as f:                                                                                                                                                                                                                                                            
             r = f.read() 
             if 'zsh-autosuggestions' not in r:
-                with open('/root/.zshrc', 'w') as f:                                                                                                                                                                                                                                                            
+                with open('$HOME/.zshrc', 'w') as f:                                                                                                                                                                                                                                                            
                     r = r.replace('plugins=(git)', 
                                   'plugins=(git zsh-autosuggestions)')                                                                                                                                                                                                                                                                  
                     r = r.replace(                                                                                                                                                                                                                                                                                       
